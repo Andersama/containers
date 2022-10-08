@@ -48,6 +48,30 @@ int main() {
         return values;
     }();
 
+    constexpr containers::plain_array_safe<int, 32> test_safe = []() {
+        containers::plain_array_safe<int, 32> values;
+        for (size_t i = 0; i < values.capacity() / 2; i++)
+            values.unchecked_emplace_back(i);
+        for (; values.size() < (values.capacity() * 3 / 4);)
+            values.append(1, values.size());
+        for (; values.size() < values.capacity();)
+            values.emplace_back(values.size());
+        // values.append(values.capacity() - values.size(), 64);
+        values.erase(values.begin() + 8, values.begin() + 24);
+        values.pop_front();
+        values.pop_front();
+        values.erase(values.begin() + 3);
+        values.pop_back();
+        values.pop_back();
+        values.insert(values.begin() + 6, 2, 4);
+        return values;
+    }();
+
+    std::cout << "match test\n";
+    for (size_t i = 0; i < test_safe.size(); i++) {
+        std::cout << test[i] << '\t' << test_safe[i] << '\n';
+    }
+
     containers::plain_array<int, 32> swap_test;
     swap_test.emplace_back(10);
     swap_test.emplace_back(2);
