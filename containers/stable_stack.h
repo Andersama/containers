@@ -223,4 +223,12 @@ template <typename T, size_t N = 32> struct stable_stack {
 	constexpr size_type capacity() const noexcept {
 		return _capacity;
 	};
+	
+	constexpr void reserve(size_type new_capacity) {
+		size_type d = new_capacity / N;
+		size_type r = new_capacity % N;
+		
+		_data.reserve(d + (r>0));
+	}
+	
 };
