@@ -1,4 +1,3 @@
-
 #pragma once
 #include <array>
 #include <cassert>
@@ -18,7 +17,7 @@ template <typename T, size_t N = 32> struct stable_stack {
 		using const_reference = const T &;
 		using size_type       = ::std::size_t;
 
-		array_type data;
+		array_type                        data;
 		[[nodiscard]] constexpr reference operator[](size_type pos) {
 			return data[pos];
 		};
@@ -38,36 +37,36 @@ template <typename T, size_t N = 32> struct stable_stack {
 		using pointer           = value_type *;
 		using reference         = value_type &;
 
-		iterator(stable_stack<T, N> *original_struct, size_type idx) : _ptr(original_struct), _idx(idx) {
+		constexpr iterator(stable_stack<T, N> *original_struct, size_type idx) : _ptr(original_struct), _idx(idx) {
 		}
 
-		iterator &operator+=(difference_type idxs) {
+		constexpr iterator &operator+=(difference_type idxs) {
 			_idx += idxs;
 			return *this;
 		}
 
-		iterator &operator-=(difference_type idxs) {
+		constexpr iterator &operator-=(difference_type idxs) {
 			_idx -= idxs;
 			return *this;
 		}
 
-		iterator &operator++() {
+		constexpr iterator &operator++() {
 			_idx++;
 			return *this;
 		}
 
-		iterator operator++(int) {
+		constexpr iterator operator++(int) {
 			iterator tmp = *this;
 			++(*this);
 			return tmp;
 		}
 
-		iterator &operator--() {
+		constexpr iterator &operator--() {
 			_idx--;
 			return *this;
 		}
 
-		iterator operator--(int) {
+		constexpr iterator operator--(int) {
 			iterator tmp = *this;
 			--(*this);
 			return tmp;
@@ -77,6 +76,14 @@ template <typename T, size_t N = 32> struct stable_stack {
 			return a._ptr == b._ptr && a._idx == b._idx;
 		};
 
+		friend bool operator<(const iterator &a, const iterator &b) {
+			return a._ptr == b._ptr && a._idx < b._idx;
+		};
+
+		friend bool operator>(const iterator &a, const iterator &b) {
+			return a._ptr == b._ptr && a._idx > b._idx;
+		};
+
 		friend bool operator!=(const iterator &a, const iterator &b) {
 			return a._ptr != b._ptr || a._idx != b._idx;
 		};
@@ -84,10 +91,9 @@ template <typename T, size_t N = 32> struct stable_stack {
 		[[nodiscard]] constexpr reference operator*() const noexcept {
 			assert(_ptr && "can't dereference value-initialized stable_stack iterator");
 			assert(_idx < _ptr->_size && "can't dereference out of range stable_stack iterator");
-			// size_type    d = _idx / N;
-			// size_type    r = _idx % N;
-			return _ptr->operator[](_idx); //_ptr->operator[](d)->operator[](r);
+			return _ptr->operator[](_idx);
 		}
+		
 
 		stable_stack<T, N> *_ptr;
 		size_type           _idx;
@@ -113,7 +119,6 @@ template <typename T, size_t N = 32> struct stable_stack {
 
 	using reverse_iterator       = ::std::reverse_iterator<iterator>;
 	using const_reverse_iterator = ::std::reverse_iterator<const_iterator>;
-	// using allocator_type = Allocator;
 
 	// emplace_back's
 	template <class... Args> constexpr reference emplace_back(Args &&...args) {
@@ -180,21 +185,6 @@ template <typename T, size_t N = 32> struct stable_stack {
 	constexpr void pop_back() {
 		// we don't destroy the object?
 		_size -= (_size > 0);
-		/*
-		if (size()) [[likely]] {
-		    size_type d = pos / N;
-		    size_type r = pos % N;
-
-		    if constexpr (::std::is_trivially_destructible<element_type>::value) {
-		        _size -= 1;
-		    } else {
-		        _size -= 1;
-		        end()->~element_type(); // destroy the tailing value
-		    }
-		} else {
-		    // error ?
-		}
-		*/
 	};
 	// pop's
 	constexpr void pop() {

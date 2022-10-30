@@ -1,4 +1,7 @@
 # containers
+An assortment of c++ containers for varying uses
+## stable_stack
+A vector (of pointers) that maintains pointer stablility to it's underlying members
 
 ## plain_array
 A c++17~ in place vector type
