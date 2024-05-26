@@ -735,7 +735,7 @@ namespace real {
 					try {
 						::std::allocator_traits<allocator_type>::construct(_capacity_allocator.first(),
 						                                                   newdata + insert_idx, std::forward<Args>(args)...);
-						::std::uninitialized_copy(
+						::std::uninitialized_copy( //should handle unwinding themselves
 							::std::make_move_iterator(begin()),
 							::std::make_move_iterator(begin()+insert_idx), newdata);
 
@@ -743,8 +743,9 @@ namespace real {
 							::std::make_move_iterator(begin()+insert_idx),
 						    ::std::make_move_iterator(end()), newdata + insert_idx + 1);
 					} catch (...) {
-						details::destroy(newdata, newdata + insert_idx + 1);
+						details::destroy_at(newdata + insert_idx);
 						_capacity_allocator.first().deallocate(newdata, new_capacity);
+						throw;
 					}
 					
 					if (_begin) {
