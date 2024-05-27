@@ -1,6 +1,9 @@
 # containers
 An assortment of c++ containers for various uses.
 
+NOTE:
+Currently working on moving my c++ libraries to [https://github.com/Andersama-Library/open-source/tree/c++](https://github.com/Andersama-Library/open-source/tree/c%2B%2B).
+
 ## stable_stack
 A vector (of pointers) that maintains pointer stablility to it's underlying members.
 
